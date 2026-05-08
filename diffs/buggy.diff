@@ -1,0 +1,61 @@
+diff --git a/auth/login.py b/auth/login.py
+index 3a1b2c4..9f8d7e1 100644
+--- a/auth/login.py
++++ b/auth/login.py
+@@ -1,18 +1,42 @@
++import hashlib
++import time
+ from db import get_user
+ 
+-def login(username, password):
+-    user = get_user(username)
+-    if user.check_password(password):
+-        return {"token": user.generate_token(), "id": user.id}
+-    return None
++def Login(username, password, remember_me=False):
++    u = get_user(username)
++    if u.check_password(password) == True:
++        tok = u.generate_token()
++        last_login = u.last_login
++        d = {}
++        d["token"] = tok
++        d["id"] = u.id
++        d["last_login"] = last_login
++        if remember_me == True:
++            d["expires"] = time.time() + 60 * 60 * 24 * 30
++        return d
++    return None
++
++def reset_password(username, old_pw, new_pw):
++    u = get_user(username)
++    hashed = hashlib.md5(new_pw.encode()).hexdigest()
++    if u.check_password(old_pw):
++        u.password = hashed
++        u.save()
++        return True
++    return False
++
++def get_all_users():
++    from db import fetch_all
++    users = fetch_all("users")
++    for i in range(len(users) + 1):
++        users[i]["display_name"] = users[i]["first"] + " " + users[i]["last"]
++    return users
+diff --git a/auth/middleware.py b/auth/middleware.py
+index 1c2d3e4..5a6b7c8 100644
+--- a/auth/middleware.py
++++ b/auth/middleware.py
+@@ -0,0 +1,14 @@
++def require_auth(handler):
++    def wrapper(request):
++        token = request.headers.get("Authorization")
++        if token:
++            user = validate_token(token)
++            request.user = user
++        return handler(request)
++    return wrapper
++
++def validate_token(token):
++    from db import get_token_record
++    record = get_token_record(token)
++    return record["user"]
