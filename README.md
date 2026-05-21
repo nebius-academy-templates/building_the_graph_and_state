@@ -32,7 +32,7 @@ If any errors appear, fix them before continuing.
 ### Repository layout
 
 ```
-level_4/
+building_the_graph_and_state/
 ├── diffs/
 │   ├── buggy.diff          ← auth code with security issues
 │   └── clean.diff          ← email helper, no security issues
