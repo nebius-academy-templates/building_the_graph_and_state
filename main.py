@@ -7,8 +7,8 @@ load_dotenv()
 
 from graph import compiled_graph  # noqa: E402
 
-BUGGY = Path("diffs/buggy.diff").read_text()
-CLEAN = Path("diffs/clean.diff").read_text()
+BUGGY = (Path(__file__).parent / "diffs" / "buggy.diff").read_text()
+CLEAN = (Path(__file__).parent / "diffs" / "clean.diff").read_text()
 
 SEP = "\n" + "=" * 60 + "\n"
 
