@@ -122,9 +122,9 @@ def summarizer_node(state: ReviewState) -> dict:
 
     summary = parsed.get("summary", "")
     try:
-        score = max(1, min(10, int(parsed.get("score", 5))))
-except (TypeError, ValueError):
-        score = 5
+        score = max(1, min(10, int(parsed.get("score", 5))))
+    except (TypeError, ValueError):
+        score = 5
 
     return {
         "summary": summary,
