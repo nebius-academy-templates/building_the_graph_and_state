@@ -121,7 +121,10 @@ def summarizer_node(state: ReviewState) -> dict:
     parsed = _parse_json_object(raw)
 
     summary = parsed.get("summary", "")
-    score = max(1, min(10, int(parsed.get("score", 5))))  # clamp to 1–10
+    try:
+        score = max(1, min(10, int(parsed.get("score", 5))))
+except (TypeError, ValueError):
+        score = 5
 
     return {
         "summary": summary,
